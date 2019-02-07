@@ -1,0 +1,133 @@
+﻿<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
+<!--<script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>-->
+
+<script type="text/javascript">jQuery(document).ready(function() {
+    var frameCount = 0;
+    var reconnectCount = -1;
+
+    function calClientFps() {
+        jQuery(".stream_info .client_fps").html("Client FPS: " + frameCount);
+        console.log(frameCount);
+        frameCount = 0;
+
+    }
+
+    setInterval(calClientFps, 1000);
+
+    function request() {
+        this.isDone = false;
+        this.clientData = {};
+        this.serverData = {};
+        this.command = "";
+        this.ipAddress = "";
+        this.uniqueId = "";
+    }
+    var ws = null;
+
+    function startClient() {
+        if (!ws || ws.readyState == 3) {
+            ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+            //alert("WebSocket is supported by your Browser!");
+
+            // Let us open a web socket
+            //var ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+            //var ws = new WebSocket("ws://localhost:6021/api");
+            //var ws = new WebSocket("ws://10.0.0.116:6022/api");
+            //var ws = new WebSocket("ws://52.22.89.230:6021/api"); //aws linux server
+            //var ws = new WebSocket("ws://52.87.91.175:6021/api");
+
+            ws.onopen = function() {
+                reconnectCount++; // increment the reconnect counter (it starred from -1 so the 1st connect sets it to 0)
+                // Web Socket is connected, send data using send()
+                var r = new request();
+                r.clientData = {
+                    stream_name: "TurtleCam"
+                };
+                r.command = "ready";
+                msg = JSON.stringify(r);
+                //alert(msg);
+                ws.send(msg);
+                //alert("Message is sent...");
+                setInterval(function() {
+                    var r = new request();
+                    r.clientData = {
+                        stream_name: "TurtleCam"
+                    };
+                    r.command = "ready";
+                    ws.send(JSON.stringify(r));
+                }, 33);
+            };
+
+            ws.onmessage = function(evt) {
+                var received_msg = evt.data;
+                var serverData = JSON.parse(evt.data).serverData;
+                var ele = document.getElementById("show_response");
+                var ele_image = document.getElementById("show_image");
+                //ele.innerHTML  = JSON.parse(evt.data).serverData.image;
+                ele_image.src = serverData.image;
+                frameCount++;
+
+                /*
+                  var r = new request();
+                  r.clientData = {stream_name:"TurtleCam"};
+                  r.command = "ready";
+                  ws.send(JSON.stringify(r));
+                  */
+
+                jQuery(".stream_info .server_fps").html("Server FPS: " + serverData.ServerStreamFPS);
+                jQuery(".stream_info .server_buffered_frames").html("Server Buffered Frames: " + serverData.ServerBufferedFrames);
+                jQuery(".stream_info .reconnect_count").html("Reconnect Count: " + reconnectCount);
+                //alert("Message is received...");
+            };
+
+            ws.onclose = function() {
+                // websocket is closed.
+                //alert("Connection is closed...");
+                console.log("Connection closed...");
+
+            };
+        }
+    }
+    setInterval(startClient, 3000);
+
+
+
+
+    if ("WebSocket" in window) {} else {
+        // The browser doesn't support WebSocket
+        alert("WebSocket NOT supported by your Browser!");
+    }
+});</script>
+<style>
+    .stream_container {
+        width: 100%;
+        height:100%;
+    }
+
+    .stream_container_inner {
+        overflow:scroll;
+    }
+</style>
+
+<div class="stream_container">
+    <div class="stream_container_inner">
+        <div class="stream_info">
+            <div class='server_fps'></div>
+            <div class='server_buffered_frames'></div>
+            <div class='client_fps'></div>
+            <div class='reconnect_count'>nhg</div>
+        </div>
+        <img id="show_image" src="/" />
+        <br />
+        <div id=''></div>
+        <div id="show_response"></div>
+        <!--<a href="javascript:WebSocketTest()">Run WebSocket</a>-->
+    </div>
+</div>
