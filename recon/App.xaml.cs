@@ -33,7 +33,7 @@ namespace recon
             {
                 ws.OnMessage += (sender, e) => Console.WriteLine("here");
                 ws.Connect();
-                ws.Send();
+                ws.Send("");
 
             }
 

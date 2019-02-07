@@ -8,7 +8,8 @@
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
   crossorigin="anonymous"></script>-->
 
-<script type="text/javascript">jQuery(document).ready(function() {
+<script type="text/javascript">
+jQuery(document).ready(function() {
     var frameCount = 0;
     var reconnectCount = -1;
 
@@ -32,6 +33,7 @@
     var ws = null;
 
     function startClient() {
+        serverInterval = null;
         if (!ws || ws.readyState == 3) {
             ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
             //alert("WebSocket is supported by your Browser!");
@@ -55,7 +57,7 @@
                 //alert(msg);
                 ws.send(msg);
                 //alert("Message is sent...");
-                setInterval(function() {
+                serverInterval = setInterval(function() {
                     var r = new request();
                     r.clientData = {
                         stream_name: "TurtleCam"
@@ -91,10 +93,11 @@
                 // websocket is closed.
                 //alert("Connection is closed...");
                 console.log("Connection closed...");
-
+                clearInterval(serverInterval); //clear the server checking/polling interval when the connection ends
             };
         }
     }
+    setTimeout(startClient, 1)
     setInterval(startClient, 3000);
 
 
@@ -106,13 +109,19 @@
     }
 });</script>
 <style>
+    #show_image{
+        width:100%;
+    }
     .stream_container {
         width: 100%;
-        height:100%;
+        height: 100%;
     }
 
     .stream_container_inner {
         overflow:scroll;
+        width: 90%;
+        margin:0 auto;
+
     }
 </style>
 

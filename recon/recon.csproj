@@ -14,4 +14,10 @@
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="websocket-sharp-standard" Version="1.0.4.1" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\MjpegViewerWeb.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\MjpegViewerWeb.html" />
+  </ItemGroup>
 </Project>
