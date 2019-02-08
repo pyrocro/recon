@@ -17,7 +17,6 @@ jQuery(document).ready(function() {
         jQuery(".stream_info .client_fps").html("Client FPS: " + frameCount);
         console.log(frameCount);
         frameCount = 0;
-
     }
 
     setInterval(calClientFps, 1000);
@@ -33,6 +32,7 @@ jQuery(document).ready(function() {
     var ws = null;
 
     function startClient() {
+        if (typeof serverInterval == undefined) clearInterval(serverInterval); //clear the server checking/polling interval when the connection ends
         serverInterval = null;
         if (!ws || ws.readyState == 3) {
             ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
@@ -64,7 +64,7 @@ jQuery(document).ready(function() {
                     };
                     r.command = "ready";
                     ws.send(JSON.stringify(r));
-                }, 33);
+                }, 66);
             };
 
             ws.onmessage = function(evt) {
@@ -93,11 +93,11 @@ jQuery(document).ready(function() {
                 // websocket is closed.
                 //alert("Connection is closed...");
                 console.log("Connection closed...");
-                clearInterval(serverInterval); //clear the server checking/polling interval when the connection ends
+
             };
         }
     }
-    setTimeout(startClient, 1)
+    setTimeout(startClient, 1);
     setInterval(startClient, 3000);
 
 
@@ -119,9 +119,8 @@ jQuery(document).ready(function() {
 
     .stream_container_inner {
         overflow:scroll;
-        width: 90%;
+        width: 98%;
         margin:0 auto;
-
     }
 </style>
 
