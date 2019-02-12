@@ -1,6 +1,4 @@
-﻿<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
-        crossorigin="anonymous"></script>
+﻿<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
 <!--<script
@@ -32,9 +30,10 @@ jQuery(document).ready(function() {
     var ws = null;
 
     function startClient() {
-        if (typeof serverInterval == undefined) clearInterval(serverInterval); //clear the server checking/polling interval when the connection ends
-        serverInterval = null;
+        //if (typeof serverInterval !== undefined) clearInterval(serverInterval); //clear the server checking/polling interval when the connection ends
+       
         if (!ws || ws.readyState == 3) {
+            serverInterval = null;
             ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
             //alert("WebSocket is supported by your Browser!");
 
@@ -93,6 +92,7 @@ jQuery(document).ready(function() {
                 // websocket is closed.
                 //alert("Connection is closed...");
                 console.log("Connection closed...");
+                clearInterval(serverInterval)
 
             };
         }
