@@ -63,7 +63,7 @@ jQuery(document).ready(function() {
                     };
                     r.command = "ready";
                     ws.send(JSON.stringify(r));
-                }, 66);
+                }, 33);
             };
 
             ws.onmessage = function(evt) {
@@ -92,7 +92,7 @@ jQuery(document).ready(function() {
                 // websocket is closed.
                 //alert("Connection is closed...");
                 console.log("Connection closed...");
-                clearInterval(serverInterval)
+                clearInterval(serverInterval);
 
             };
         }

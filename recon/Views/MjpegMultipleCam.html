@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>Default</title>
+</head>
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+</head>
+
+<script type="text/javascript">function request() {
+        this.isDone = false;
+        this.clientData = {};
+        this.serverData = {};
+        this.command = "";
+        this.ipAddress = "";
+        this.uniqueId = "";
+    }
+
+    class MjpegStreamUnit {
+        addStream(stream_name, stream_url) {
+            // Web Socket is connected, send data using send()
+            var r = new request();
+            r.clientData = { stream_name: stream_name };
+            r.clientData = { stream_url: stream_url };
+            r.command = "add_stream";
+            var msg = JSON.stringify(r);
+            //alert(msg);
+            ws.send(msg);
+            //alert("Message is sent...");
+        }
+        removeStream(stream_name) {
+            // Web Socket is connected, send data using send()
+            var r = new request();
+            r.clientData = { stream_name: stream_name };
+            r.command = "remove_stream";
+            var msg = JSON.stringify(r);
+            //alert(msg);
+            ws.send(msg);
+            //alert("Message is sent...");
+        }
+        start(mjpeg_stream_name, image_ele_name) {
+            var frameCount = 0;
+            function calClientFps() {
+                jQuery(".stream_info .client_fps").html("Client FPS: " + frameCount);
+                console.log(frameCount);
+                frameCount = 0;
+            }
+            setInterval(calClientFps, 1000);
+
+
+
+            if ("WebSocket" in window) {
+                //alert("WebSocket is supported by your Browser!");
+
+                // Let us open a web socket
+                var ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+                //var ws = new WebSocket("http://9ddaaa3f.ngrok.io/api");
+                //var ws = new WebSocket("ws://10.0.0.116:6022/api");
+                //var ws = new WebSocket("ws://52.22.89.230:6021/api"); //aws linux server
+                //var ws = new WebSocket("ws://52.87.91.175:6021/api");
+
+                ws.onopen = function () {
+                    // Web Socket is connected, send data using send()
+                    var r = new request();
+                    r.clientData = { stream_name: "TurtleCam" };
+                    r.command = "ready";
+                    var msg = JSON.stringify(r);
+                    //alert(msg);
+                    ws.send(msg);
+                    //alert("Message is sent...");
+                };
+
+                ws.onmessage = function (evt) {
+                    var received_msg = evt.data;
+                    var serverData = JSON.parse(evt.data).serverData;
+                    //console.log(JSON.parse(received_msg).command)
+                    switch (JSON.parse(received_msg).command) {
+                        case "ready":
+                            var ele = document.getElementById("show_response");
+                            var ele_image = document.getElementById(image_ele_name);
+                            //ele.innerHTML  = JSON.parse(evt.data).serverData.image;
+                            ele_image.src = serverData.image;
+                            frameCount++;
+                            var r = new request();
+                            r.clientData = { stream_name: mjpeg_stream_name };
+                            r.command = "ready";
+                            //console.log(r);
+                            ws.send(JSON.stringify(r));
+
+                            jQuery("#" + image_ele_name + " .stream_info #" + image_ele_name + " .server_fps").html("Server FPS: " + serverData.ServerStreamFPS)
+                            jQuery("#" + image_ele_name + " .stream_info #" + image_ele_name + " .server_buffered_frames").html("Server Buffered Frames: " + serverData.ServerBufferedFrames)
+                            break;
+                        case "add_stream":
+                            break;
+                        case "remove_stream":
+                            break;
+                        default:
+                            break;
+
+                    }
+                    //alert("Message is received...");
+                };
+
+                ws.onclose = function () {
+                    // websocket is closed.
+                    alert("Connection is closed...");
+                };
+            }
+            else {
+                // The browser doesn't support WebSocket
+                alert("WebSocket NOT supported by your Browser!");
+            }
+        };
+    }
+
+    jQuery(document).ready(function () {
+        /*rasp_1 = new MjpegStreamUnit()
+        rasp_2 = new MjpegStreamUnit()
+        rasp_3 = new MjpegStreamUnit()
+        rasp_4 = new MjpegStreamUnit()*/
+        apt_cam = new MjpegStreamUnit()
+        rnd_cam = new MjpegStreamUnit()
+        //rnd_cam.removeStream("rnd_cam")
+        //rnd_cam.addStream(rnd_cam,"http://200.36.58.250/mjpg/video.mjpg?resolution=640x480")
+        rnd_cam.start("TurtleCam", "show_image")
+        /*rasp_1.start("rp_1", "show_image_rp1")
+        rasp_2.start("rp_2", "show_image_rp2")
+        rasp_3.start("rp_3", "show_image_rp3")
+        rasp_4.start("rp_4", "show_image_rp4")
+        rasp_4.start("rp_5", "show_image_rp5")*/
+        //apt_cam.addStream("apt_cam","https://6104b253.ngrok.io")
+        apt_cam.start("apt_cam", "show_image_rp1")
+
+    });</script>
+<style>
+    .stream_info {
+        visibility: hidden;
+    }
+
+    .stream_container {
+    }
+
+    .stream_container_inner {
+        overflow: hidden;
+    }
+
+    #video_container_outer {
+        margin: 200px auto;
+        width: 100%;
+    }
+
+        #video_container_outer img {
+            float: left;
+            width: 98%;
+            margin-bottom:5px;
+        }
+</style>
+<div id="video_container_outer">
+    <img id="show_image" src="" />
+    <img id="show_image_rp1" src="" />
+    <img id="show_image_rp2" src="" />
+    <img id="show_image_rp3" src="" />
+    <img id="show_image_rp4" src="" />
+    <img id="show_image_rp5" src="" />
+</div>
+
+
+<div class="clearfix"></div>
