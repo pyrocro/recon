@@ -5,13 +5,15 @@ using recon.Views;
 //using System.Net.WebSockets;
 using System.Threading;
 using WebSocketSharp;
+using recon.Models;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace recon
 {
     public partial class App : Application
     {
-
+        public YWebSocketManager GlobalWebSocket = new YWebSocketManager(null);
+        //string addStream= "{\n  \"isDone\": false,\n  clientData: {\"stream_name\": \"apt_cam\", \"stream_url\":\"https://6104b253.ngrok.io\" },\n  command: \"add_stream\"\n}";
         public App()
         {
             InitializeComponent();
@@ -29,13 +31,14 @@ namespace recon
             System.Console.WriteLine("reached here!");
             System.Console.ResetColor();*/
 
-            using (var ws = new WebSocket("ws://proxy.8codebubble.com:6021/api"))
-            {
-                ws.OnMessage += (sender, e) => Console.WriteLine("here");
-                ws.Connect();
-                ws.Send("");
 
-            }
+            /*GlobalWebSocket = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+            GlobalWebSocket.OnMessage += (sender, e) => 
+            Console.WriteLine("here ->>"+e.Data);
+            GlobalWebSocket.Connect();
+            GlobalWebSocket.Send("{\"isDone\": false, clientData: {\"stream_name\": \"TurtleCam\"},command: \"ready\"}");*/
+
+            GlobalWebSocket.startFrameRequest();
 
             // Handle when your app starts
         }
