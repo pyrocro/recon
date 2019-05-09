@@ -23,6 +23,15 @@ namespace recon.Models
             //WS.OnError += GlobalWebSocket_OnError;
             WS.EmitOnPing = true;
             this.connect();
+            WS.Send("{\"isDone\": false, clientData: {\"stream_name\": \"TurtleCam\"},command: \"ready\"}");
+        }
+        private void connect_reconnect()
+        {
+            if(WS.IsAlive)
+            {
+                this.connect();
+            }
+
         }
         private void connect()
         {
@@ -56,10 +65,10 @@ namespace recon.Models
             Dictionary<string,string> data = JsonConvert.DeserializeObject< Dictionary<string, string>>(e.Data);
             Console.WriteLine(data["serverData"]);
             var image = this.Base64ToImage(data["serverData"]);
-
         }
         public void startFrameRequest()
         {
+            connect_reconnect();
             WS.Send("{\"isDone\": false, clientData: {\"stream_name\": \"TurtleCam\"},command: \"ready\"}");
         }
 

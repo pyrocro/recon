@@ -12,7 +12,7 @@ namespace recon
 {
     public partial class App : Application
     {
-        public YWebSocketManager GlobalWebSocket = new YWebSocketManager(null);
+        public YWebSocketManager GlobalWebSocket = null;
         //string addStream= "{\n  \"isDone\": false,\n  clientData: {\"stream_name\": \"apt_cam\", \"stream_url\":\"https://6104b253.ngrok.io\" },\n  command: \"add_stream\"\n}";
         public App()
         {
@@ -37,7 +37,7 @@ namespace recon
             Console.WriteLine("here ->>"+e.Data);
             GlobalWebSocket.Connect();
             GlobalWebSocket.Send("{\"isDone\": false, clientData: {\"stream_name\": \"TurtleCam\"},command: \"ready\"}");*/
-
+            GlobalWebSocket = new YWebSocketManager(null);
             GlobalWebSocket.startFrameRequest();
 
             // Handle when your app starts
