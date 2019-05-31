@@ -14,24 +14,24 @@ namespace recon.Models
         {
             if (wsUrl.IsNullOrEmpty())
             {
-                wsUrl = "ws://proxy.8codebubble.com:6021/api";
+                wsUrl = "wss://proxy.8codebubble.com:6021/api";
             }
             WS = new WebSocket(wsUrl);
             WS.OnMessage += GlobalWebSocket_OnMessage;
             WS.OnOpen += GlobalWebSocket_OnOpen;
             WS.OnClose += GlobalWebSocket_OnClose;
             //WS.OnError += GlobalWebSocket_OnError;
-            WS.EmitOnPing = true;
+            //WS.EmitOnPing = true;
+            WS.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
             this.connect();
             WS.Send("{\"isDone\": false, clientData: {\"stream_name\": \"TurtleCam\"},command: \"ready\"}");
         }
         private void connect_reconnect()
         {
-            if(WS.IsAlive)
+            if(!WS.IsAlive)
             {
                 this.connect();
             }
-
         }
         private void connect()
         {

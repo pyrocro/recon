@@ -34,11 +34,11 @@ jQuery(document).ready(function() {
        
         if (!ws || ws.readyState == 3) {
             serverInterval = null;
-            ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+            ws = new WebSocket("wss://proxy.8codebubble.com:6021/api");
             //alert("WebSocket is supported by your Browser!");
 
             // Let us open a web socket
-            //var ws = new WebSocket("ws://proxy.8codebubble.com:6021/api");
+            //var ws = new WebSocket("wss://proxy.8codebubble.com:6021/api");
             //var ws = new WebSocket("ws://localhost:6021/api");
             //var ws = new WebSocket("ws://10.0.0.116:6022/api");
             //var ws = new WebSocket("ws://52.22.89.230:6021/api"); //aws linux server
