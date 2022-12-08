@@ -13,7 +13,7 @@
     <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" />  
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="websocket-sharp-standard" Version="1.0.4.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\MjpegViewerWeb.html" />
